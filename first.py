@@ -24,11 +24,9 @@ class WinMap(QMainWindow):
         self.map_ll = [44.486926, 33.396157]
         self.map_key = API_KEY_STATIC
 
-        # Обновляем карту
         self.refresh_map()
 
     def refresh_map(self):
-        # Параметры запроса к API Yandex Static Maps
         map_params = {
             "ll": ','.join(map(str, self.map_ll)),
             'z': self.map_zoom,
