@@ -25,19 +25,54 @@ class WinMap(QMainWindow):
         self.map_ll = [44.486926, 33.396157]
         self.map_key = API_KEY_STATIC
 
-        # Обновляем карту
+        self.step_size = 0.01 / self.map_zoom * 5
+
         self.refresh_map()
 
     def keyPressEvent(self, event):
+        super().keyPressEvent(event)
         if event.key() == Qt.Key.Key_PageUp:
             self.map_zoom = min(self.map_zoom + 1, 18)
+            if 1 <= self.map_zoom <= 3:
+                self.step_size = 0.01 / self.map_zoom * 50
+            elif 3 <=  self.map_zoom <= 5:
+                self.step_size = 0.01 / self.map_zoom * 40
+            elif 5 <= self.map_zoom <= 8:
+                self.step_size = 0.01 / self.map_zoom * 30
+            elif 8 <= self.map_zoom <= 10:
+                self.step_size = 0.01 / self.map_zoom * 20
+            elif 10 <= self.map_zoom <= 15:
+                self.step_size = 0.01 / self.map_zoom * 10
+            elif 15 <= self.map_zoom <= 18:
+                self.step_size = 0.01 / self.map_zoom
         elif event.key() == Qt.Key.Key_PageDown:
             self.map_zoom = max(self.map_zoom - 1, 1)
+            if 1 <= self.map_zoom <= 3:
+                self.step_size = 0.01 / self.map_zoom * 50
+            elif 3 <= self.map_zoom <= 5:
+                self.step_size = 0.01 / self.map_zoom * 40
+            elif 5 <= self.map_zoom <= 8:
+                self.step_size = 0.01 / self.map_zoom * 30
+            elif 8 <= self.map_zoom <= 10:
+                self.step_size = 0.01 / self.map_zoom * 20
+            elif 10 <= self.map_zoom <= 15:
+                self.step_size = 0.01 / self.map_zoom * 10
+            elif 15 <= self.map_zoom <= 18:
+                self.step_size = 0.01 / self.map_zoom
+        elif event.key() == Qt.Key.Key_Up:
+            self.map_ll[1] += self.step_size
+        elif event.key() == Qt.Key.Key_Down:
+            self.map_ll[1] -= self.step_size
+        elif event.key() == Qt.Key.Key_Left:
+            self.map_ll[0] -= self.step_size
+        elif event.key() == Qt.Key.Key_Right:
+            self.map_ll[0] += self.step_size
+        self.map_ll[0] = max(-180, min(180, self.map_ll[0]))
+        self.map_ll[1] = max(-90, min(90, self.map_ll[1]))
         self.refresh_map()
-        super().keyPressEvent(event)
+
 
     def refresh_map(self):
-        # Параметры запроса к API Yandex Static Maps
         map_params = {
             "ll": ','.join(map(str, self.map_ll)),
             'z': self.map_zoom,
